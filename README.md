@@ -1,6 +1,6 @@
 # 项目介绍
 
-**项目为软件工程课程课设，基于Github上OMS-main项目二开
+**软件工程课程课设，基于Github上OMS-main项目二开**
 
 **原项目地址：**[xytroot/OMS: 使用SSM框架实现的点餐管理系统](https://github.com/xytroot/OMS)
 
