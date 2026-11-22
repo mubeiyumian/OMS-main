@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.dao.MenuMapper">
+    <select id="getMenuList" resultType="Menu">
+        select menu.*, category.cateName from ordering_sys.menu, ordering_sys.category
+        where menu.categoryId = category.categoryId and menu.del = 0
+    </select>
+
+    <select id="getDishById" parameterType="int" resultType="Menu">
+        select menu.*, category.cateName from ordering_sys.menu, ordering_sys.category
+        where menu.dishesId=#{dishesId} and menu.categoryId = category.categoryId and menu.del = 0
+    </select>
+
+    <select id="getDishByName" parameterType="String" resultType="Menu">
+        select * from ordering_sys.menu where dishesName=#{dishesName} and menu.del = 0
+    </select>
+
+    <select id="getDishBySuffixName" parameterType="String" resultType="Menu">
+        select menu.*, category.cateName from ordering_sys.menu, ordering_sys.category
+        where dishesName like "%"#{dishesName}"%" and menu.categoryId = category.categoryId and menu.del = 0
+    </select>
+
+    <insert id="addDish" parameterType="Menu">
+        insert into ordering_sys.menu values (#{dishesId}, #{dishesName}, #{unitPrice}, #{categoryId}, #{del}, #{image})
+    </insert>
+
+    <update id="updateDish" parameterType="Menu">
+        update ordering_sys.menu
+        set dishesName=#{dishesName},unitPrice=#{unitPrice},categoryId=#{categoryId}, image=#{image}
+        where dishesId = #{dishesId}
+    </update>
+
+    <delete id="deleteDish" parameterType="int">
+        delete from ordering_sys.menu where dishesId=#{dishesId}
+    </delete>
+
+    <select id="clientGetDishByCategoryId" parameterType="int" resultType="Menu">
+        select menu.*, category.cateName from ordering_sys.menu, ordering_sys.category
+        where menu.categoryId = #{categoryId} and menu.categoryId = category.categoryId and menu.del = 0
+    </select>
+
+    <select id="getCategory" resultType="Category">
+        select * from ordering_sys.category
+    </select>
+
+    <insert id="addCategory" parameterType="Category">
+        insert into ordering_sys.category values (#{categoryId}, #{cateName})
+    </insert>
+
+    <update id="updateDel" parameterType="int">
+        update ordering_sys.menu
+        set del = 1
+        where dishesId = #{dishesId}
+    </update>
+
+    <select id="selectMap" resultType="WXmap">
+        select * from ordering_sys.wxMap
+    </select>
+
+    <select id="selectMapById" parameterType="int" resultType="WXmap">
+        select * from ordering_sys.wxMap
+        where id = #{dishesId}
+    </select>
+
+    <update id="updateMap" parameterType="WXmap">
+        update ordering_sys.wxMap
+        set num = #{num}
+        where id = #{id}
+    </update>
+
+    <insert id="insertMap" parameterType="WXmap">
+        insert into ordering_sys.wxMap values (#{id}, #{num})
+    </insert>
+
+    <update id="truncateTable">
+        truncate table ordering_sys.wxMap
+    </update>
+</mapper>

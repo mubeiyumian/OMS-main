@@ -1,0 +1,13 @@
+package com.xu.pojo;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class WXmap {
+    private Integer id;
+    private int num;
+}

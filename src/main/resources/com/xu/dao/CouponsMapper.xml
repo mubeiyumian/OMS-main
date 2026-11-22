@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.dao.CouponsMapper">
+
+    <insert id="addCoupons" parameterType="Coupons">
+        insert into ordering_sys.coupons values (#{couponsId}, #{couponsName},
+        #{couponsPrice}, #{couponsThreshold}, #{effectiveDate},
+        #{invalidDate}, #{state}, #{del})
+    </insert>
+
+    <select id="getCouponsList" resultType="Coupons">
+        select * from ordering_sys.coupons
+        where del = 0
+    </select>
+
+    <select id="getCouponsById" parameterType="int" resultType="Coupons">
+        select * from ordering_sys.coupons where couponsId=#{couponsId}
+    </select>
+
+    <update id="updateCoupons" parameterType="Coupons">
+        update ordering_sys.coupons
+        set couponsName=#{couponsName},couponsThreshold=#{couponsThreshold},effectiveDate=#{effectiveDate}
+        ,invalidDate=#{invalidDate},state=#{state}
+        where couponsId = #{couponsId}
+    </update>
+
+    <select id="getUserCoupons" parameterType="String" resultType="CouponsUserToShow">
+        select usrc.couponsUserId, u.userName, c.couponsName, c.couponsPrice, c.couponsThreshold, c.effectiveDate,
+        c.invalidDate,
+        c.state as mainState, usrc.state as secondState from `user` u
+        left join usercoupons usrc on u.userId = usrc.userId
+        left join coupons c on c.couponsId = usrc.couponsId
+        where u.userName = #{userName} and c.del = 0
+        order by c.effectiveDate desc
+    </select>
+
+    <select id="getEffectiveCoupons" resultType="CouponsUserToShow">
+        select usrc.couponsUserId, u.userName, c.couponsName, c.couponsPrice, c.couponsThreshold, c.effectiveDate,
+        c.invalidDate,
+        c.state as mainState, usrc.state as secondState from `user` u
+        left join usercoupons usrc on u.userId = usrc.userId
+        left join coupons c on c.couponsId = usrc.couponsId
+        where u.userName = #{userName} and c.state = 1
+        and usrc.state = 0 and c.couponsThreshold &lt;= #{totalPrice} and c.del = 0 and
+        current_date between c.effectiveDate and date_add(c.invalidDate, interval 1 day )
+    </select>
+
+    <select id="getUserCouponsById" parameterType="int" resultType="CouponsUserToShow">
+        select usrc.couponsUserId, u.userName, c.couponsName, c.couponsPrice, c.couponsThreshold, c.effectiveDate,
+        c.invalidDate,
+        c.state as mainState, usrc.state as secondState from `user` u
+        left join usercoupons usrc on u.userId = usrc.userId
+        left join coupons c on c.couponsId = usrc.couponsId
+        where usrc.couponsUserId = #{couponsType}
+    </select>
+
+    <update id="updateCouponsById" parameterType="int">
+        update ordering_sys.usercoupons
+        set state = 1
+        where couponsUserId = #{couponsUserId}
+    </update>
+
+    <select id="getCouponsAll" parameterType="int" resultType="Coupons">
+        select * from coupons
+        where couponsId not in
+        (select usercoupons.couponsId from usercoupons where usercoupons.userId = #{userId})
+        and state = 1 and del = 0
+    </select>
+
+    <insert id="addCouponsUser" parameterType="CouponsUser">
+        insert into ordering_sys.usercoupons values (#{couponsUserId}, #{couponsId},
+        #{userId}, #{state})
+    </insert>
+
+    <select id="getCouponsBySuffixName" parameterType="String" resultType="Coupons">
+        select * from ordering_sys.coupons where couponsName like "%"#{couponsName}"%"
+        and del = 0
+    </select>
+
+    <update id="deleteCoupons" parameterType="int">
+        update ordering_sys.coupons
+        set del = 1
+        where couponsId = #{couponsId}
+    </update>
+</mapper>

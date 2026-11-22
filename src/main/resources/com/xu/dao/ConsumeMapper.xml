@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xu.dao.ConsumeMapper">
+    <insert id="addConsume" parameterType="Consume">
+        insert into ordering_sys.consume values (#{consumeId}, #{billId}, #{tableId}, #{userId}, #{dishesId},
+        #{dishesNum}, #{orderTime})
+    </insert>
+
+    <select id="getConsume" parameterType="int" resultMap="map">
+        select menu.dishesName, menu.unitPrice, consume.dishesNum, (menu.unitPrice*consume.dishesNum) as Price from menu
+        left join consume on consume.dishesId = menu.dishesId
+        where consume.billId = #{billId}
+    </select>
+
+    <resultMap id="map" type="ConsumeToShow">
+        <result property="dishesName" column="dishesName"/>
+        <result property="unitPrice" column="unitPrice"/>
+        <result property="dishesNum" column="dishesNum"/>
+        <result property="Price" column="Price"/>
+    </resultMap>
+</mapper>
